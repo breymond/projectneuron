@@ -2,6 +2,7 @@
 #define NEURON_H
 
 #include <cassert>
+#include <vector>
 
 using namespace std;
 
@@ -10,13 +11,13 @@ const double tau_m_=20.0;
 const double v_th_=20.0;
 const double t_ref=2.0;
 const double h_=0.1;
-	
+const long delay_steps = 15;	
 	
 class Neuron
 {
 	
 	
-	const long refractory_steps_;
+	long refractory_steps;
 	
 	double c1;
 	double c2;
@@ -27,7 +28,9 @@ class Neuron
 	long t_spike;
 	long n_spikes;
 	long clock;
-	long delay_steps;
+	
+	
+	std::vector <int> spike_buffer;
 	
 	
 	public:	
@@ -38,8 +41,10 @@ class Neuron
 		double getv_m();
 		double geti_ext();
 		double gett_spike();
-		//long n_spikes();
-		//long clock();
+		long getn_spikes();
+		
+		void receive_spike(unsigned long arrival, double j);
+		bool update(unsigned long steps);
 };
 
 #endif

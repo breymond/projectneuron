@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cmath>
+#include <vector>
 #include "neuron.hpp"
 
 
@@ -21,15 +22,11 @@ double Neuron::gett_spike()
 }
 
 
-/*long getn_spikes()
+long Neuron::getn_spikes()
 {
 	return n_spikes;
 }
 
-long getclock()
-{
-	return clock;
-}*/
 
 void Neuron::setc1andc2(double h_, double tau_m, double R_)
 {
@@ -42,17 +39,23 @@ void Neuron::seti_ext(double x)
 	i_ext = x;	
 }
 
+void Neuron::receive_spike(unsigned long arrival, double j)
+{
+	const size_t t_out = arrival%(delay_steps + 1);
+	spike_buffer[t_out] += j;
+}
+
 
 bool Neuron::update(unsigned long steps)
 {
 	if(steps == 0) return false;
 	
 	bool spike = false;
-	const auto t_stop = CLOCK + steps;
+	double t_stop = clock + steps;
 	
 	while (clock < t_stop)
 	{
-		const auto t_in = clock % (delay_steps +1);
+		int t_in = clock % (delay_steps +1);
 		if(v_m > v_th_)
 		{
 			++n_spikes;
@@ -66,9 +69,9 @@ bool Neuron::update(unsigned long steps)
 		}
 		else
 		{
-		v_m = c1*v_m + c2 *i_ext + spike_buffer(t_in);
+			v_m = c1*v_m + c2 *i_ext + spike_buffer[t_in];
 		}
-		spike_buffer(t_in)=0.0;
+		spike_buffer[t_in]=0.0;
 		++clock;
 	}
 	return spike;
