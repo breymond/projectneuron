@@ -1,0 +1,4 @@
+cmake_minimum_required (VERSION 2.6)
+project (projectneuron2)
+
+add_executable (Simulation main2.cpp neuron2.cpp)
